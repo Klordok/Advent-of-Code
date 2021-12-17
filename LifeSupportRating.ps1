@@ -96,3 +96,13 @@ $OGbstring = Get-OxygenGeneratorRating -OGRData $ReportData
 $CObstring = Get-ScrubberRating -ScrubData $ReportData
 Write-Host "Oxygen Generation Rating:$OGbstring"
 Write-Host "CO2 Scrub Rating:$CObstring"
+
+$OGint = [Convert]::ToInt32($OGbstring,2)
+$COint = [Convert]::ToInt32($CObstring,2)
+
+$OGint
+$COint
+$answer = $OGint*$COint
+
+Write-Host "Answer: $answer"
+#Answer: 3969126
