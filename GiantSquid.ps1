@@ -53,6 +53,29 @@ function Find-Bingo {
             return $true
         }
     }
+    foreach ($column in 0..4) {
+        $columnArray = @($board[0][$column],$board[1][$column],$board[2][$column],$board[3][$column],$board[4][$column])
+        if((Compare-Object -ReferenceObject $bingoArray -DifferenceObject $columnArray).count -eq 0){
+            #column bingo
+            return $true
+        }
+    }
+}
+
+function Find-BoardSum {
+    #sum all unmarked numbers on board
+    param(
+        $winningBoard
+    )
+    $boardSum = 0
+    foreach ($row in $winningBoard) {
+        foreach ($item in $row){
+            if($item -is [int]){
+                $boardSum += $item
+            }
+        }
+    }
+    return $boardSum
 }
 
 foreach($number in $numberList){
@@ -73,6 +96,9 @@ foreach($number in $numberList){
                     if(Find-Bingo -board $allBoards[$boardIndex]){
                         #found bingo
                         Write-Output "Board $boardIndex Bingo!"
+                        $boardSum = Find-BoardSum -winningBoard $allBoards[$boardIndex]
+                        $answer = $boardSum*([int]$number)
+                        Write-Output "Answer: $answer"
                         exit
                     }
                 }
