@@ -13,7 +13,7 @@ To guarantee victory against the giant squid, figure out which board will win fi
 What will your final score be if you choose that board?
 #>
 
-$bingoInput = Get-Content .\bingoInput.txt -Raw
+$bingoInput = Get-Content .\bingoTest.txt -Raw
 
 $splitInput = $bingoInput -split "\r?\n\r?\n"
 
@@ -30,7 +30,7 @@ foreach($boardString in $allBoardStrings){
     foreach ($row in $rowStrings) {
         #convert row to an int array
         $rowList = @()
-        [int[]]$rowValues = $row.trim().split()
+        [int[]]$rowValues = $row.trim().replace("  "," ").split()
         $rowList += $rowValues
         $board.Add($rowList)
     }
@@ -50,17 +50,19 @@ function Search-Board {
 
 foreach($number in $numberList){
     #check each board for number
+    Write-Output "Looking for $number"
     #mark number. (change symbol?)
     #Check if bingo
-    foreach($boardIndex in 0..99){
+    foreach($boardIndex in 0..($allBoards.Count-1)){
         #search each board for matching number
-        if($allBoards[$boardIndex] -match $number){
+        if($allBoards[$boardIndex] -match [int]$number){
             #search each row in board
             foreach ($rowIndex in 0..4) {
-                $column = $allBoards[$boardIndex][$rowIndex].IndexOf($number)
+                $column = $allBoards[$boardIndex][$rowIndex].IndexOf([int]$number)
                 #if number exists get the index and mark the board
                 if($column -ne -1){
                     $allBoards[$boardIndex][$rowIndex][$column] = 'x'
+                    #Write-Output "Found $number in board $boardIndex"
                 }
             }
         }    
