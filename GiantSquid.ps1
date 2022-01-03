@@ -13,7 +13,7 @@ To guarantee victory against the giant squid, figure out which board will win fi
 What will your final score be if you choose that board?
 #>
 
-$bingoInput = Get-Content .\bingoTest.txt -Raw
+$bingoInput = Get-Content .\bingoInput.txt -Raw
 
 $splitInput = $bingoInput -split "\r?\n\r?\n"
 
@@ -106,3 +106,4 @@ foreach($number in $numberList){
         }    
     }
 }
+#answer: 29440
