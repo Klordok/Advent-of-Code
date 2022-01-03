@@ -38,19 +38,26 @@ foreach($boardString in $allBoardStrings){
     $allBoards.Add($board)
 }
 
-function Search-Board {
-    #Check board for number
-    #Mark number
-    #Check for bingo
+function Find-Bingo {
+    #Check board for bingo
+    #check rows for "xxxxx"
+    #check columns for "xxxxx"
+
     param (
-        $board,
-        $number
+        $board
     )
+    $bingoArray = @('x','x','x','x','x')
+    foreach ($row in $board) {
+        if((Compare-Object -ReferenceObject $bingoArray -DifferenceObject $row).count -eq 0){
+            #row bingo
+            return $true
+        }
+    }
 }
 
 foreach($number in $numberList){
     #check each board for number
-    Write-Output "Looking for $number"
+    #Write-Output "Looking for $number"
     #mark number. (change symbol?)
     #Check if bingo
     foreach($boardIndex in 0..($allBoards.Count-1)){
@@ -63,6 +70,11 @@ foreach($number in $numberList){
                 if($column -ne -1){
                     $allBoards[$boardIndex][$rowIndex][$column] = 'x'
                     #Write-Output "Found $number in board $boardIndex"
+                    if(Find-Bingo -board $allBoards[$boardIndex]){
+                        #found bingo
+                        Write-Output "Board $boardIndex Bingo!"
+                        exit
+                    }
                 }
             }
         }    
