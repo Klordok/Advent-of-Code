@@ -70,23 +70,25 @@ function Find-Overlap {
     foreach ($x in $xMin..$xMax) {
         foreach ($y in $yMin..$yMax){
             foreach ($coord in $Coordinates) {
-                if ($x -eq $coord.x1) {
+                if (($coord.x1 -eq $coord.x2) -and ($x -eq $coord.x1)) {
                     #check vertical line
                     $yBound = ($coord.y1,$coord.y2) | Sort-Object
                     if (($y -ge $yBound[0]) -and ($y -le $yBound[1])) {
                         #point is inside vertical line
+                        Write-Host "($x,$y) between ($($coord.x1),$($coord.y1)) and ($($coord.x2),$($coord.y2))"
                         $markedPoints.Add([PSCustomObject]@{              
                             x = $x
                             y = $y
                         }) | Out-Null
                     }
                 }
-                elseif ($y -eq $coord.y1) {
+                elseif (($coord.y1 -eq $coord.y2) -and ($y -eq $coord.y1)) {
                     #check horizontal line
                     $xBound = ($coord.x1,$coord.x2) | Sort-Object
                     if (($x -ge $xBound[0]) -and ($x -le $xBound[1])) {
                         #point is inside horizontal line
-                        $markedPoints.Add(@{              
+                        Write-Host "($x,$y) between ($($coord.x1),$($coord.y1)) and ($($coord.x2),$($coord.y2))"
+                        $markedPoints.Add([PSCustomObject]@{              
                             x = $x
                             y = $y
                         }) | Out-Null
@@ -95,7 +97,7 @@ function Find-Overlap {
             }
         }
     }
-    $markedPoints | Sort-Object -Property x,y | FT
+    $markedPoints | Group-Object -Property x,y | Select-Object Name,Count | Where-Object{$_.Count -ge 2}
 }
 
 Convert-Coordinates -RawCoordinates $TestCoordinates
