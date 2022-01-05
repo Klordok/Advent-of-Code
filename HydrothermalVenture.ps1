@@ -49,5 +49,37 @@ function Convert-Coordinates {
     }
 }
 
+function Find-Overlap {
+    param (
+        $Coordinates
+    )
+    #determine the number of points where at least two lines overlap
+    <# 
+    Find XY bounds of coordinate set
+    Create list of coordinates in grid
+    for each coordinate check if at least 2 lines intersect
+    add point to list
+    #>
+    $xMax = ($Coordinates.x1+$Coordinates.x2 | Measure-Object -Maximum).Maximum
+    $xMin = ($Coordinates.x1+$Coordinates.x2 | Measure-Object -Minimum).Minimum
+    $yMax = ($Coordinates.y1+$Coordinates.y2 | Measure-Object -Maximum).Maximum
+    $yMin = ($Coordinates.y1+$Coordinates.y2 | Measure-Object -Minimum).Minimum
+    foreach ($x in $xMin..$xMax) {
+        foreach ($y in $yMin..$yMax){
+            foreach ($coord in $Coordinates) {
+                if ($x -eq $coord.x1) {
+                    #check vertical line
+                    if (condition) {
+                        
+                    }
+                }
+                if ($y -eq $coord.y1) {
+                    #check horizontal line
+                }
+            }
+        }
+    }
+}
+
 Convert-Coordinates -RawCoordinates $TestCoordinates
 $ValidCoordinates
