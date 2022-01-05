@@ -66,7 +66,23 @@ function Find-Overlap {
     $yMin = ($Coordinates.y1+$Coordinates.y2 | Measure-Object -Minimum).Minimum
 
     $markedPoints = New-Object -TypeName "System.Collections.ArrayList"
-
+    <#
+    this is very inefficient but it works. takes about 35 minutes to complete
+    better way:
+    $linePoints = @{}
+    foreach($coord -in $Coordinates){
+        if($coord.x1 -eq $coord.x2){
+            foreach($y in $yLow..$yHigh){
+                $linePoints.Add(@{
+                    x = $coord.x1
+                    y = $y
+                })
+            }
+        }
+        #same for y
+    }
+    Count all $linePoints with duplicates
+    #>
     foreach ($x in $xMin..$xMax) {
         foreach ($y in $yMin..$yMax){
             foreach ($coord in $Coordinates) {
@@ -75,7 +91,7 @@ function Find-Overlap {
                     $yBound = ($coord.y1,$coord.y2) | Sort-Object
                     if (($y -ge $yBound[0]) -and ($y -le $yBound[1])) {
                         #point is inside vertical line
-                        Write-Host "($x,$y) between ($($coord.x1),$($coord.y1)) and ($($coord.x2),$($coord.y2))"
+                        #Write-Host "($x,$y) between ($($coord.x1),$($coord.y1)) and ($($coord.x2),$($coord.y2))"
                         $markedPoints.Add([PSCustomObject]@{              
                             x = $x
                             y = $y
@@ -87,7 +103,7 @@ function Find-Overlap {
                     $xBound = ($coord.x1,$coord.x2) | Sort-Object
                     if (($x -ge $xBound[0]) -and ($x -le $xBound[1])) {
                         #point is inside horizontal line
-                        Write-Host "($x,$y) between ($($coord.x1),$($coord.y1)) and ($($coord.x2),$($coord.y2))"
+                        #Write-Host "($x,$y) between ($($coord.x1),$($coord.y1)) and ($($coord.x2),$($coord.y2))"
                         $markedPoints.Add([PSCustomObject]@{              
                             x = $x
                             y = $y
@@ -97,10 +113,12 @@ function Find-Overlap {
             }
         }
     }
-    $markedPoints | Group-Object -Property x,y | Select-Object Name,Count | Where-Object{$_.Count -ge 2}
+    $OverlapCount = ($markedPoints | Group-Object -Property x,y | Select-Object Name,Count | Where-Object{$_.Count -ge 2}).count
+    Write-Host "Answer: $OverlapCount"
 }
 
-Convert-Coordinates -RawCoordinates $TestCoordinates
+Convert-Coordinates -RawCoordinates $VentCoordinates
 #$ValidCoordinates
 
 Find-Overlap -Coordinates $ValidCoordinates
+#Answer: 5084
