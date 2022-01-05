@@ -64,22 +64,41 @@ function Find-Overlap {
     $xMin = ($Coordinates.x1+$Coordinates.x2 | Measure-Object -Minimum).Minimum
     $yMax = ($Coordinates.y1+$Coordinates.y2 | Measure-Object -Maximum).Maximum
     $yMin = ($Coordinates.y1+$Coordinates.y2 | Measure-Object -Minimum).Minimum
+
+    $markedPoints = New-Object -TypeName "System.Collections.ArrayList"
+
     foreach ($x in $xMin..$xMax) {
         foreach ($y in $yMin..$yMax){
             foreach ($coord in $Coordinates) {
                 if ($x -eq $coord.x1) {
                     #check vertical line
-                    if (condition) {
-                        
+                    $yBound = ($coord.y1,$coord.y2) | Sort-Object
+                    if (($y -ge $yBound[0]) -and ($y -le $yBound[1])) {
+                        #point is inside vertical line
+                        $markedPoints.Add([PSCustomObject]@{              
+                            x = $x
+                            y = $y
+                        }) | Out-Null
                     }
                 }
-                if ($y -eq $coord.y1) {
+                elseif ($y -eq $coord.y1) {
                     #check horizontal line
+                    $xBound = ($coord.x1,$coord.x2) | Sort-Object
+                    if (($x -ge $xBound[0]) -and ($x -le $xBound[1])) {
+                        #point is inside horizontal line
+                        $markedPoints.Add(@{              
+                            x = $x
+                            y = $y
+                        }) | Out-Null
+                    }
                 }
             }
         }
     }
+    $markedPoints | Sort-Object -Property x,y | FT
 }
 
 Convert-Coordinates -RawCoordinates $TestCoordinates
-$ValidCoordinates
+#$ValidCoordinates
+
+Find-Overlap -Coordinates $ValidCoordinates
