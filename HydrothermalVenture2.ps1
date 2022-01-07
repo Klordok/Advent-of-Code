@@ -58,30 +58,36 @@ function Add-LinePoints {
         if($coord.x1 -eq $coord.x2){
             #vertical line
             foreach($y in ($coord.y1)..($coord.y2)){
-                $linePoints.Add(@{
+                $linePoints.Add([PSCustomObject]@{
                     x = $coord.x1
                     y = $y
-                })
+                }) | Out-Null
             }
         }
         #same for y
         elseif($coord.y1 -eq $coord.y2){
             #horizontal line
             foreach($x in ($coord.x1)..($coord.x2)){
-                $linePoints.Add(@{
+                $linePoints.Add([PSCustomObject]@{
                     x = $x
                     y = $coord.y1
-                })
+                }) | Out-Null
             }
         }
         else {
             #diagonal
-            foreach ($x in ($coord.x1)..($coord.x2)) {
-                #increment y as well
+            $xCoords = ($coord.x1)..($coord.x2)
+            $yCoords = ($coord.y1)..($coord.y2)
+            foreach ($i in 0..($xCoords.count - 1)) {
+                $linePoints.Add([PSCustomObject]@{
+                    x = $xCoords[$i]
+                    y = $yCoords[$i]
+                }) | Out-Null
             }
         }
     }
     #Count all $linePoints with duplicates
+    $linePoints
     Find-Overlap -linePoints $linePoints
     
 }
@@ -94,8 +100,7 @@ function Find-Overlap {
     Write-Host "Answer: $OverlapCount"
 }
 
-Convert-Coordinates -RawCoordinates $TestCoordinates
+Convert-Coordinates -RawCoordinates $VentCoordinates
 $ValidCoordinates
-
-#Find-Overlap -Coordinates $ValidCoordinates
-#Answer: 5084
+Add-LinePoints -Coordinates $ValidCoordinates
+#Answer:
