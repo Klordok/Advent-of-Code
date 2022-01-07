@@ -87,8 +87,11 @@ function Add-LinePoints {
         }
     }
     #Count all $linePoints with duplicates
-    $linePoints
-    Find-Overlap -linePoints $linePoints
+    $linePoints.Count
+    $OverlapPoints = $linePoints | Group-Object -Property x,y | Select-Object Count | Where-Object{$_.Count -ge 2}
+    $OverlapCount = $OverlapPoints.count
+    Write-Host "Answer: $OverlapCount"
+    #Find-Overlap -linePoints $linePoints
     
 }
 function Find-Overlap {
