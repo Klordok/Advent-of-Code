@@ -87,23 +87,46 @@ function Add-LinePoints {
         }
     }
     #Count all $linePoints with duplicates
-    $linePoints.Count
-    $OverlapPoints = $linePoints | Group-Object -Property x,y | Select-Object Count | Where-Object{$_.Count -ge 2}
-    $OverlapCount = $OverlapPoints.count
-    Write-Host "Answer: $OverlapCount"
-    #Find-Overlap -linePoints $linePoints
-    
+
+    Sort-Coords -CoordList $linePoints
 }
 function Find-Overlap {
     param (
         $linePoints
     )
     #determine the number of points where at least two lines overlap
-    $OverlapCount = ($linePoints | Group-Object -Property x,y | Select-Object Name,Count | Where-Object{$_.Count -ge 2}).count
+    $linePoints.Count
+    $OverlapPoints = $linePoints | Group-Object -Property x,y | Select-Object Count | Where-Object{$_.Count -ge 2}
+    $OverlapCount = $OverlapPoints.count
     Write-Host "Answer: $OverlapCount"
+    #Find-Overlap -linePoints $linePoints
+}
+
+function Sort-Coords($CoordList){
+    $Sorted = $CoordList | Sort-Object x,y
+    Write-Host "Sorted list. Checking $($Sorted.count) coordinates"
+    $GoodCoords = New-Object -TypeName "System.Collections.ArrayList"
+    $previous = [PSCustomObject]@{
+        x = $null
+        y = $null
+    }
+    $lastAdded = [PSCustomObject]@{
+        x = $null
+        y = $null
+    }
+    foreach($current in $Sorted){
+        #check if already in list
+        if(($current.x -ne $lastAdded.x) -or ($current.y -ne $lastAdded.y)){
+            if(($current.x -eq $previous.x) -and ($current.y -eq $previous.y)){
+                $GoodCoords.Add($current)
+            }
+        }
+    }
+    $DuplicateCount = $GoodCoords.Count
+    return $DuplicateCount
 }
 
 Convert-Coordinates -RawCoordinates $VentCoordinates
-$ValidCoordinates
+#$ValidCoordinates
 Add-LinePoints -Coordinates $ValidCoordinates
 #Answer:
