@@ -120,6 +120,8 @@ function Sort-Coords($CoordList){
         if(($current.x -ne $lastAdded.x) -or ($current.y -ne $lastAdded.y)){
             if(($current.x -eq $previous.x) -and ($current.y -eq $previous.y)){
                 $DupeCoords.Add($current) | Out-Null
+                $lastAdded.x = $current.x
+                $lastAdded.y = $current.y
             }
         }
         $previous.x = $current.x
@@ -133,4 +135,4 @@ function Sort-Coords($CoordList){
 Convert-Coordinates -RawCoordinates $VentCoordinates
 #$ValidCoordinates
 Add-LinePoints -Coordinates $ValidCoordinates
-#Answer:
+#Klordok Answer: 17787
