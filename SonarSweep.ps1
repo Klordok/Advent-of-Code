@@ -16,3 +16,4 @@ foreach($depth in $measurements){
 }
 $increases
 #final answer 1680. actual answer 1681
+#answer: 1288 on Klordok

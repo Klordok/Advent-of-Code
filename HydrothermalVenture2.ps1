@@ -104,8 +104,9 @@ function Find-Overlap {
 
 function Sort-Coords($CoordList){
     $Sorted = $CoordList | Sort-Object x,y
+    $Sorted | Out-File .\SortedCoords.txt
     Write-Host "Sorted list. Checking $($Sorted.count) coordinates"
-    $GoodCoords = New-Object -TypeName "System.Collections.ArrayList"
+    $DupeCoords = New-Object -TypeName "System.Collections.ArrayList"
     $previous = [PSCustomObject]@{
         x = $null
         y = $null
@@ -115,15 +116,18 @@ function Sort-Coords($CoordList){
         y = $null
     }
     foreach($current in $Sorted){
-        #check if already in list
+        #if current matches previous and has not already been added, add to DupeCoords.
         if(($current.x -ne $lastAdded.x) -or ($current.y -ne $lastAdded.y)){
             if(($current.x -eq $previous.x) -and ($current.y -eq $previous.y)){
-                $GoodCoords.Add($current)
+                $DupeCoords.Add($current)
             }
         }
+        $previous.x = $current.x
+        $previous.y = $current.y
     }
-    $DuplicateCount = $GoodCoords.Count
-    return $DuplicateCount
+
+    $DuplicateCount = $DupeCoords.Count
+    Write-Host "Answer: $DuplicateCount"
 }
 
 Convert-Coordinates -RawCoordinates $VentCoordinates

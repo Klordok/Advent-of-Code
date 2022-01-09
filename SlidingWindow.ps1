@@ -25,3 +25,4 @@ while ($index -lt $setSize-2) {
 }
 $increases
 #answer: 1704
+#Klordok answer: 1311

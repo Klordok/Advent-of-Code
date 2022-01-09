@@ -117,8 +117,73 @@ function Find-Overlap {
     Write-Host "Answer: $OverlapCount"
 }
 
+function Add-LinePoints {
+    param (
+        $Coordinates
+    )
+    #find coordinates for all points in line segments
+    #add to $linePoints
+    $linePoints = New-Object -TypeName "System.Collections.ArrayList"
+    foreach($coord in $Coordinates){
+        if($coord.x1 -eq $coord.x2){
+            #vertical line
+            foreach($y in ($coord.y1)..($coord.y2)){
+                $linePoints.Add([PSCustomObject]@{
+                    x = $coord.x1
+                    y = $y
+                }) | Out-Null
+            }
+        }
+        #same for y
+        else{
+            #horizontal line
+            foreach($x in ($coord.x1)..($coord.x2)){
+                $linePoints.Add([PSCustomObject]@{
+                    x = $x
+                    y = $coord.y1
+                }) | Out-Null
+            }
+        }
+
+    }
+    #Count all $linePoints with duplicates
+
+    Sort-Coords -CoordList $linePoints
+}
+
+function Sort-Coords($CoordList){
+    $Sorted = $CoordList | Sort-Object x,y
+    $Sorted | Out-File .\SortedCoords.txt
+    Write-Host "Sorted list. Checking $($Sorted.count) coordinates"
+    $DupeCoords = New-Object -TypeName "System.Collections.ArrayList"
+    $previous = [PSCustomObject]@{
+        x = $null
+        y = $null
+    }
+    $lastAdded = [PSCustomObject]@{
+        x = $null
+        y = $null
+    }
+    foreach($current in $Sorted){
+        #if current matches previous and has not already been added, add to DupeCoords.
+        if(($current.x -ne $lastAdded.x) -or ($current.y -ne $lastAdded.y)){
+            if(($current.x -eq $previous.x) -and ($current.y -eq $previous.y)){
+                $DupeCoords.Add($current)
+            }
+        }
+        $previous.x = $current.x
+        $previous.y = $current.y
+    }
+
+    $DuplicateCount = $DupeCoords.Count
+    Write-Host "Answer: $DuplicateCount"
+}
+
 Convert-Coordinates -RawCoordinates $VentCoordinates
 #$ValidCoordinates
 
-Find-Overlap -Coordinates $ValidCoordinates
+#Find-Overlap -Coordinates $ValidCoordinates
 #Answer: 5084
+
+Add-LinePoints -Coordinates $ValidCoordinates
+#Klordok: 5672 too high

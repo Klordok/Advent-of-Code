@@ -30,3 +30,4 @@ Write-Host "Horizonatal position: $horizontal"
 Write-Host "Depth: $depth"
 Write-Host "H*D = $answer"
 #answer: 2091984
+#Klordok answer: 1484118

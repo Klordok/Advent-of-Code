@@ -55,7 +55,7 @@ $testData = '00100',
 #epsilon rate is inverse binary value. Then convert to decimal
 #power consumption = epsilon*gamma
 
-$ReportData = Get-Content "C:\Users\kelsey.krehbiel\OneDrive - Verra Mobility\Documents\VScode\Powershell\Advent of Code\ReportData.txt"
+$ReportData = Get-Content ".\ReportData.txt"
 $DataCount = $ReportData.Length
 $gammaBinary = ''
 
@@ -81,3 +81,4 @@ $power = $gammaInt*$epsilonInt
 Write-Host "Gamma binary rate is $gammaBinary `nGamma decimal rate is $gammaInt"
 Write-Host "Power consuption = $power"
 #answer = 738234
+#Klordok answer: 1997414

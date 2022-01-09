@@ -106,3 +106,4 @@ $answer = $OGint*$COint
 
 Write-Host "Answer: $answer"
 #Answer: 3969126
+#Klordok answer: 1032597

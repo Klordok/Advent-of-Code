@@ -11,7 +11,7 @@ Using this new interpretation of the commands,
 calculate the horizontal position and depth you would have after following the planned course. 
 What do you get if you multiply your final horizontal position by your final depth?
 #>
-$diveCommands = Get-Content -Path 'C:\Users\kelsey.krehbiel\OneDrive - Verra Mobility\Documents\VScode\Powershell\Advent of Code\diveCommands.txt'
+$diveCommands = Get-Content -Path '.\diveCommands.txt'
 $testDive = 'forward 5','down 5','forward 8','up 3','down 8','forward 2'
 $horizontal = 0
 $depth = 0
@@ -35,3 +35,4 @@ Write-Host "Horizonatal position: $horizontal"
 Write-Host "Depth: $depth"
 Write-Host "H*D = $answer"
 #answer 2086261056
+#klordok answer: 1463827010
