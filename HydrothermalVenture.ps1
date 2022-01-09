@@ -169,6 +169,8 @@ function Sort-Coords($CoordList){
         if(($current.x -ne $lastAdded.x) -or ($current.y -ne $lastAdded.y)){
             if(($current.x -eq $previous.x) -and ($current.y -eq $previous.y)){
                 $DupeCoords.Add($current)
+                $lastAdded.x = $current.x
+                $lastAdded.y = $current.y
             }
         }
         $previous.x = $current.x
@@ -176,6 +178,7 @@ function Sort-Coords($CoordList){
     }
 
     $DuplicateCount = $DupeCoords.Count
+    $DupeCoords | Out-File .\DupeCoords.txt
     Write-Host "Answer: $DuplicateCount"
 }
 
@@ -186,4 +189,4 @@ Convert-Coordinates -RawCoordinates $VentCoordinates
 #Answer: 5084
 
 Add-LinePoints -Coordinates $ValidCoordinates
-#Klordok: 5672 too high
+#Klordok: 5306

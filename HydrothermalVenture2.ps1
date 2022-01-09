@@ -119,7 +119,7 @@ function Sort-Coords($CoordList){
         #if current matches previous and has not already been added, add to DupeCoords.
         if(($current.x -ne $lastAdded.x) -or ($current.y -ne $lastAdded.y)){
             if(($current.x -eq $previous.x) -and ($current.y -eq $previous.y)){
-                $DupeCoords.Add($current)
+                $DupeCoords.Add($current) | Out-Null
             }
         }
         $previous.x = $current.x
