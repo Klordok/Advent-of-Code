@@ -26,3 +26,18 @@ more expensive outcomes include aligning at position 1 (41 fuel), position 3 (39
 Determine the horizontal position that the crabs can align to using the least fuel possible. 
 How much fuel must they spend to align to that position?
 #>
+using namespace System.Collections.Generic
+
+$TestInput = 16,1,2,0,4,2,7,1,2,14
+
+$CrabPositions = [List[int]]@((Get-Content .\TreasuryOfWhales.txt).Split(","))
+$CrabPositions.Count
+
+function Find-EfficientPosition {
+    param (
+        $HorizontalPositions
+    )
+    $HorizontalPositions | Group-Object | Sort-Object -Property Count -Descending
+}
+
+Find-EfficientPosition -HorizontalPositions $CrabPositions
