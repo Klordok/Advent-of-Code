@@ -17,9 +17,9 @@ $InitialState = Get-Content -Path .\LanternFishData.txt
 
 #calculating entire pop for each cycle is too slow.
 
-$FishList = $TestState.Split(",")
+$FishList = $InitialState.Split(",")
 $FishState = [List[int]]@($FishList)
-$days = 1
+$days = 256
 
 function Count-Descendants(){
   param(
@@ -33,5 +33,73 @@ function Count-Descendants(){
   }  
 }
 
-#Answer:
+function Set-PopState (){
+  [CmdletBinding()]
+  param (
+      $InitialState
+  )
+  $AgeDistribution = [Ordered]@{
+    cycle0=0
+    cycle1=0
+    cycle2=0
+    cycle3=0
+    cycle4=0
+    cycle5=0
+    cycle6=0
+    cycle7=0
+    cycle8=0
+  }
+  foreach($fish in $InitialState){
+    #count number of fish at each point in their cycle
+    switch ($fish) {
+      0 { $AgeDistribution["cycle0"] += 1 }
+      1 { $AgeDistribution["cycle1"] += 1 }
+      2 { $AgeDistribution["cycle2"] += 1 }
+      3 { $AgeDistribution["cycle3"] += 1 }
+      4 { $AgeDistribution["cycle4"] += 1 }
+      5 { $AgeDistribution["cycle5"] += 1 }
+      6 { $AgeDistribution["cycle6"] += 1 }
+      7 { $AgeDistribution["cycle7"] += 1 }
+      8 { $AgeDistribution["cycle8"] += 1 }
+      Default {}
+    }
+  }
+  $AgeDistribution
+  Update-Population -StartingAges $AgeDistribution -Days $days
+}
+
+function Update-Population {
+  param (
+    $StartingAges,
+    $Days
+  )
+  foreach ($day in 1..$Days){
+    #age the population
+    $tempVal = $AgeDistribution["cycle0"]
+    $AgeDistribution["cycle0"] = $AgeDistribution["cycle1"]
+    $AgeDistribution["cycle1"] = $AgeDistribution["cycle2"]
+    $AgeDistribution["cycle2"] = $AgeDistribution["cycle3"]
+    $AgeDistribution["cycle3"] = $AgeDistribution["cycle4"]
+    $AgeDistribution["cycle4"] = $AgeDistribution["cycle5"]
+    $AgeDistribution["cycle5"] = $AgeDistribution["cycle6"]
+    $AgeDistribution["cycle6"] = $AgeDistribution["cycle7"]
+    $AgeDistribution["cycle7"] = $AgeDistribution["cycle8"]
+    $AgeDistribution["cycle8"] = $tempVal
+    $AgeDistribution["cycle6"] += $tempVal
+    #Write-Output "Day $day :"
+    #Write-Output $AgeDistribution
+  }
+  $TotalFish = 0
+  foreach ($group in $AgeDistribution.Values) {
+    $TotalFish += $group  
+  }
+  
+  Write-Host "`nTotalFish after $days days: $TotalFish"
+  $AgeDistribution
+}
+
+
+Set-PopState -InitialState $FishState
+
+#Answer: 1613415325809
 
