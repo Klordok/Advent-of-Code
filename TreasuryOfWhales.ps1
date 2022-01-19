@@ -37,7 +37,20 @@ function Find-EfficientPosition {
     param (
         $HorizontalPositions
     )
-    $HorizontalPositions | Group-Object | Sort-Object -Property Count -Descending
+    $Sorted = $HorizontalPositions | Sort-Object
+    $FuelNeeded = 0
+    if(($Sorted.count)%2 -eq 0){
+        $medianIndex = ($Sorted.count)/2
+        $median = ($Sorted[$medianIndex]+$Sorted[$medianIndex-1])/2
+    }
+    else {
+        $median = $Sorted[($Sorted.count-1)/2]
+    }
+    foreach($position in $Sorted){
+        $FuelNeeded += [Math]::Abs($position - $median)
+    }
+    Write-Host "$FuelNeeded Fuel"
 }
 
 Find-EfficientPosition -HorizontalPositions $CrabPositions
+#Answer: 355592 Fuel
