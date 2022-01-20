@@ -65,7 +65,7 @@ function Decode-Signals {
     param (
         $UniqueSignals
     )
-    $SegmentMap = @{
+    $SegmentMap = [ordered]@{
         'a'='' #in 7 and not in 1
         'b'=''
         'c'='' #in 1 and 0. Not in 6
@@ -74,7 +74,7 @@ function Decode-Signals {
         'f'=''
         'g'=''
     }
-    $DigitMap = @{
+    $DigitMap = [ordered]@{
         0="" #6 segments
         1="" #2 segments
         2="" #5 segments
@@ -101,9 +101,44 @@ function Decode-Signals {
     $SegmentMap['a'] = (Compare-Object -ReferenceObject $DigitMap[7].toCharArray() -DifferenceObject $DigitMap[1].toCharArray()).InputObject
 
     #letters in 1 represent either c or f postion
+    foreach ($signal in $UnknownDigits) {
+        if ($signal.length -eq 6){
+            #0,6,9
+            $cSegment = (Compare-Object -ReferenceObject $signal.toCharArray() -DifferenceObject $DigitMap[1].toCharArray() | Where-Object{$_.SideIndicator -eq "=>"}).InputObject
+            if ($null -ne $cSegment){
+                $SegmentMap['c'] = $cSegment
+                $SegmentMap['f'] = (Compare-Object -ReferenceObject $DigitMap[1].toCharArray() -DifferenceObject $cSegment).InputObject
+                $DigitMap[6] = $signal
+                $UnknownDigits.Remove($signal)
+                break
+            }
+        }
+    }
+
+    #2,3,5 have 5 segments
+    foreach ($signal in $UnknownDigits) {
+        if ($signal.length -eq 5) {
+            $SignalChars = $signal.toCharArray()
+            if (($SignalChars -contains $SegmentMap['c']) -and ($SignalChars -contains $SegmentMap['f'])){
+                $DigitMap[3] = $signal
+            }
+            elseif (($SignalChars -contains $SegmentMap['c']) -and ($SignalChars -notcontains $SegmentMap['f'])) {
+                $DigitMap[2] = $signal
+            }
+            else {
+                $DigitMap[5] = $signal
+            }
+        }
+    }
+    $UnknownDigits.Remove($DigitMap[3])
+    $UnknownDigits.Remove($DigitMap[2])
+    $UnknownDigits.Remove($DigitMap[5])
 
     Write-Host "`nKnown Digits:"
     $DigitMap
+    Write-Host "`nKnown Segments:"
+    $SegmentMap
+    Write-Host "`nUnknown Digits:"
     $UnknownDigits
 }
 
